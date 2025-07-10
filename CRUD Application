@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>CRUD Application</title>
+    <link rel="stylesheet" href="CRUD.css">
+</head>
+<body>
+    <h2>User Information CRUD</h2>
+    <form id="userForm">
+        <input type="text" id="name" placeholder="Enter name" required>
+        <input type="text" id="email" placeholder="Enter email" required>
+        <button type="submit">Add User</button>
+    </form>
+    <table id="userTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <script>
+        const userForm = document.getElementById('userForm');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const userTableBody = document.querySelector('#userTable tbody');
+        let users = [];
+        let editIndex = null;
+        userForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
+            if (editIndex===null) {
+                users.push({name, email });
+            } else {
+                users[editIndex] = {name, email };
+                editIndex = null;
+            }
+            userForm.reset();
+            renderTable();
+        });
+        function renderTable() {
+            userTableBody.innerHTML = '';
+            users.forEach((user, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>
+                        <button onclick="editUser(${index})">Edit</button>
+                        <button onclick="deleteUser(${index})">Delete</button>
+                    </td>
+                `;
+                userTableBody.appendChild(row);
+            });
+        }
+        window.editUser = function(index) {
+            const user = users[index];
+            nameInput.value = user.name;
+            emailInput.value = user.email;
+            editIndex = index;
+        }
+        window.deleteUser = function(index) {
+            if(confirm('Are you sure you want to delete this user?')){
+            users.splice(index, 1);
+            renderTable();
+        }
+    }
+    renderTable();
+    </script>
+</body>
+</html>
